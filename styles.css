@@ -1,0 +1,63 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:root {
+  --cell-size: 80px;
+  --piece-size: calc(var(--cell-size) * 0.7);
+}
+
+body {
+  margin: 0;
+}
+
+.boardRow {
+  display: flex;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell {
+  height: var(--cell-size);
+  width: var(--cell-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.piece {
+  height: var(--piece-size);
+  width: var(--piece-size);
+  border-radius: 50%;
+  box-shadow: 0px 0px 10px 1px gray;
+  visibility: hidden;
+}
+
+.piece-black {
+  background-color: honeydew;
+  cursor: pointer;
+  visibility: visible;
+}
+
+.piece-white {
+  background-color: antiquewhite;
+  cursor: pointer;
+  visibility: visible;
+}
+
+.white {
+  background-color: antiquewhite;
+}
+
+.black {
+  background-color: cadetblue;
+}
+
+.grey {
+  background-color: grey;
+}
