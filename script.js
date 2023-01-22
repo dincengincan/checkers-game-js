@@ -105,9 +105,15 @@ function createBoard() {
 
 function setSelectPiece(e) {
   e.stopPropagation();
+
+  if (selectedPieceElement) {
+    selectedPieceElement.classList.remove("selected");
+  }
+
   selectedPieceElement = this;
+  selectedPieceElement.classList.add("selected");
+
   isWhitePieceSelected = whitePieces.has(getLocation(this));
-  console.log(isWhitePieceSelected);
 }
 
 function playMove() {
@@ -129,6 +135,7 @@ function playMove() {
     (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
     (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
 
+    selectedPieceElement.classList.remove("selected");
     selectedPieceElement = null;
     isWhiteNext = !isWhiteNext;
   }

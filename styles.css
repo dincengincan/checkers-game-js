@@ -54,6 +54,10 @@ body {
   background-color: antiquewhite;
 }
 
+.selected {
+  background-color: red;
+}
+
 .black {
   background-color: cadetblue;
 }
