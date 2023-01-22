@@ -39,7 +39,7 @@ body {
 }
 
 .piece-black {
-  background-color: honeydew;
+  background-color: dimgray;
   cursor: pointer;
   visibility: visible;
 }

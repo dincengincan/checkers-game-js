@@ -6,6 +6,7 @@ const emptyValue = "e";
 
 let selectedPieceElement = "";
 let isWhiteNext = true;
+let isWhitePieceSelected = false;
 
 const gridSize = 8;
 const board = [];
@@ -100,16 +101,25 @@ function createBoard() {
 function setSelectPiece(e) {
   e.stopPropagation();
   selectedPieceElement = this;
+  isWhitePieceSelected = whitePieces.has(this.getAttribute("data-location"));
+  console.log(isWhitePieceSelected);
 }
 
 function playMove() {
   if (!selectedPieceElement) {
     return;
   }
-  const selectedClass = isWhiteNext ? "piece-white" : "piece-black";
+
+  const selectedClass = isWhitePieceSelected ? "piece-black" : "piece-white";
 
   selectedPieceElement.classList.remove(selectedClass);
   this.children[0].classList.add(selectedClass);
+
+  const nextLocation = this.children[0].getAttribute("data-location");
+  const previousLocation = selectedPieceElement.getAttribute("data-location");
+
+  (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
+  (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
   selectedPieceElement = null;
   isWhiteNext = !isWhiteNext;
 }
