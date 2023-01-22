@@ -119,13 +119,13 @@ function playMove() {
     ? whitePieceClass
     : blackPieceClass;
 
-  selectedPieceElement.classList.remove(selectedClass);
-  this.children[0].classList.add(selectedClass);
-
   const nextLocation = getLocation(this.children[0]);
   const previousLocation = getLocation(selectedPieceElement);
 
   if (isValidMove(previousLocation, nextLocation)) {
+    selectedPieceElement.classList.remove(selectedClass);
+    this.children[0].classList.add(selectedClass);
+
     (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
     (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
 
@@ -135,7 +135,38 @@ function playMove() {
 }
 
 function isValidMove(prevLocation, nextLocation) {
-  return true;
+  const [x, y] = prevLocation.split("");
+  const numberX = Number(x);
+  const numberY = Number(y);
+
+  const validMoves = new Set();
+
+  let firstValidX = 0;
+  let firstValidY = 0;
+  let secondValidX = 0;
+  let secondValidY = 0;
+
+  if (isWhitePieceSelected) {
+    firstValidX = numberX + 1;
+    firstValidY = numberY - 1;
+
+    secondValidX = numberX + 1;
+    secondValidY = numberY + 1;
+  } else {
+    firstValidX = numberX - 1;
+    firstValidY = numberY - 1;
+
+    secondValidX = numberX - 1;
+    secondValidY = numberY + 1;
+  }
+
+  const firstValidLocation = `${firstValidX}${firstValidY}`;
+  const secondValidLocation = `${secondValidX}${secondValidY}`;
+
+  validMoves.add(firstValidLocation);
+  validMoves.add(secondValidLocation);
+
+  return validMoves.has(nextLocation);
 }
 
 function getLocation(element) {
