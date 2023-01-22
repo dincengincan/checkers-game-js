@@ -6,12 +6,15 @@ const emptyValue = "e";
 
 let selectedPieceElement = "";
 let isWhiteNext = true;
+
+const whitePieceClass = "piece-white";
+const blackPieceClass = "piece-black";
 let isWhitePieceSelected = false;
 
 const gridSize = 8;
 const board = [];
 
-const blackPieces = new Set([
+const whitePieces = new Set([
   "00",
   "02",
   "04",
@@ -26,7 +29,7 @@ const blackPieces = new Set([
   "26",
 ]);
 
-const whitePieces = new Set([
+const blackPieces = new Set([
   "51",
   "53",
   "55",
@@ -86,7 +89,9 @@ function createBoard() {
         piece.addEventListener("click", setSelectPiece);
         piece.classList.add("piece");
         if (hasBlackPiece || hasWhitePiece) {
-          piece.classList.add(hasBlackPiece ? "piece-white" : "piece-black");
+          piece.classList.add(
+            hasBlackPiece ? blackPieceClass : whitePieceClass
+          );
         }
         cell.appendChild(piece);
       } else {
@@ -101,7 +106,7 @@ function createBoard() {
 function setSelectPiece(e) {
   e.stopPropagation();
   selectedPieceElement = this;
-  isWhitePieceSelected = whitePieces.has(this.getAttribute("data-location"));
+  isWhitePieceSelected = whitePieces.has(getLocation(this));
   console.log(isWhitePieceSelected);
 }
 
@@ -110,18 +115,31 @@ function playMove() {
     return;
   }
 
-  const selectedClass = isWhitePieceSelected ? "piece-black" : "piece-white";
+  const selectedClass = isWhitePieceSelected
+    ? whitePieceClass
+    : blackPieceClass;
 
   selectedPieceElement.classList.remove(selectedClass);
   this.children[0].classList.add(selectedClass);
 
-  const nextLocation = this.children[0].getAttribute("data-location");
-  const previousLocation = selectedPieceElement.getAttribute("data-location");
+  const nextLocation = getLocation(this.children[0]);
+  const previousLocation = getLocation(selectedPieceElement);
 
-  (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
-  (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
-  selectedPieceElement = null;
-  isWhiteNext = !isWhiteNext;
+  if (isValidMove(previousLocation, nextLocation)) {
+    (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
+    (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
+
+    selectedPieceElement = null;
+    isWhiteNext = !isWhiteNext;
+  }
+}
+
+function isValidMove(prevLocation, nextLocation) {
+  return true;
+}
+
+function getLocation(element) {
+  return element.getAttribute("data-location");
 }
 
 createMatrix();
