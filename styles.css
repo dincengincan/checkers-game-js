@@ -68,3 +68,17 @@ body {
 .grey {
   background-color: grey;
 }
+
+.kuday-mode {
+  background-color: red;
+  color: white;
+}
+
+button {
+  background-color: gray;
+  padding: 10px 5px;
+  margin: 10px;
+  min-width: 200px;
+  border: none;
+  cursor: pointer;
+}

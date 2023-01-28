@@ -1,4 +1,5 @@
 const boardElement = document.getElementById("board");
+const jumpModeButton = document.getElementById("jump-mode-button");
 
 const blackValue = "b";
 const whiteValue = "w";
@@ -6,6 +7,7 @@ const emptyValue = "e";
 
 let selectedPieceElement = "";
 let isWhiteNext = true;
+let isGodMode = false;
 
 const whitePieceClass = "piece-white";
 const blackPieceClass = "piece-black";
@@ -30,13 +32,12 @@ const whitePieces = new Set([
 ]);
 
 const blackPieces = new Set([
-  "35",
   "51",
   "53",
   "55",
   "57",
   "60",
-
+  "62",
   "64",
   "66",
   "71",
@@ -117,8 +118,16 @@ function setSelectPiece(e) {
   isWhitePieceSelected = whitePieces.has(getLocation(this));
 }
 
+function isWhitePiece(element) {
+  return element.classList.contains("piece-white");
+}
+
 function playMove() {
   if (!selectedPieceElement) {
+    return;
+  }
+
+  if (isWhiteNext !== isWhitePieceSelected) {
     return;
   }
 
@@ -136,9 +145,9 @@ function playMove() {
     (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
     (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
 
-    if (hasBeaten(previousLocation, nextLocation)) {
-      beatPieces(previousLocation, nextLocation);
-    }
+    // if (hasBeaten(previousLocation, nextLocation)) {
+    //   beatPieces(previousLocation, nextLocation);
+    // }
 
     selectedPieceElement.classList.remove("selected");
     selectedPieceElement = null;
@@ -147,8 +156,7 @@ function playMove() {
 }
 
 function hasBeaten(prevLocation, nextLocation) {
-  const nextNeighbor = getNextNeighbour(prevLocation, whiteNeighbourCalculator);
-  return nextLocation !== nextNeighbor;
+  // return nextLocation !== nextNeighbor;
 }
 
 function beatPieces(prevLocation, nextLocation) {}
@@ -161,32 +169,27 @@ function isValidMove(prevLocation, nextLocation) {
 
 function validateNeighbours(pieceLocation, moves) {
   const validMoves = moves ?? new Set();
-  const nextNeighbour = getNextNeighbour(
-    pieceLocation,
-    whiteNeighbourCalculator
-  );
+  const neighbors = getAllNeighbours(pieceLocation);
+  // ["23", "32"]
+  console.log({ neighbors });
 
-  const nextNextNeighbour = getNextNeighbour(
-    nextNeighbour,
-    whiteNeighbourCalculator
-  );
+  for (let i = 0; i < neighbors.length; i++) {
+    if ((isWhiteNext ? whitePieces : blackPieces).has(neighbors[i])) {
+      // skip if there is own piece
+      continue;
+    }
 
-  if (whitePieces.has(nextNeighbour)) {
-    //if there is white return
-    return validMoves;
+    if (isCellEmpty(neighbors[i])) {
+      // if empty add to valid moves
+      validMoves.add(neighbors[i]);
+    }
+
+    // if (blackPieces.has(neighbors[i]) && isCellEmpty(nextNextNeighbour)) {
+    //   // if there is opponent and space behind it add it
+    //   validMoves.add(nextNextNeighbour);
+    // }
   }
-
-  if (isCellEmpty(nextNeighbour)) {
-    // if empty add to valid moves and return
-    validMoves.add(nextNeighbour);
-    return validMoves;
-  }
-
-  if (blackPieces.has(nextNeighbour) && isCellEmpty(nextNextNeighbour)) {
-    // if there is opponent and space behind it add it
-    validMoves.add(nextNextNeighbour);
-  }
-
+  console.log(validMoves);
   return validMoves;
 }
 
@@ -194,23 +197,33 @@ function isCellEmpty(location) {
   return !blackPieces.has(location) && !whitePieces.has(location);
 }
 
-function getNextNeighbour(location, calculator, direction) {
-  // TODO this abstraction is not working
-  return calculator(location, direction);
-}
-
-function whiteNeighbourCalculator(location, direction = "l") {
+function getAllNeighbours(location) {
   const [numberX, numberY] = extractLocationAsNumbers(location);
 
-  const firstNeightborX = numberX + 1;
-  const firstNeightborY = numberY - 1;
+  let firstNeighbourX;
+  let firstNeighbourY;
 
-  const secondNeighborX = numberX + 1;
-  const secondNeighborY = numberY + 1;
+  let secondNeighbourX;
+  let secondNeighbourY;
 
-  return direction === "l"
-    ? `${firstNeightborX}${firstNeightborY}`
-    : `${secondNeighborX}${secondNeighborY}`;
+  if (isWhiteNext) {
+    firstNeighbourX = numberX + 1;
+    firstNeighbourY = numberY - 1;
+
+    secondNeighbourX = numberX + 1;
+    secondNeighbourY = numberY + 1;
+  } else {
+    firstNeighbourX = numberX - 1;
+    firstNeighbourY = numberY - 1;
+
+    secondNeighbourX = numberX - 1;
+    secondNeighbourY = numberY + 1;
+  }
+
+  return [
+    `${firstNeighbourX}${firstNeighbourY}`,
+    `${secondNeighbourX}${secondNeighbourY}`,
+  ];
 }
 
 function extractLocationAsNumbers(location) {
@@ -224,5 +237,17 @@ function getLocation(element) {
   return element.getAttribute("data-location");
 }
 
+function handleGodMode() {
+  isGodMode = !isGodMode;
+  if (!isGodMode) {
+    this.innerText = "ENABLE QUDAY MODE";
+    this.classList.toggle("kuday-mode");
+  } else {
+    this.innerText = "DISABLE QUDAY MODE";
+    this.classList.toggle("kuday-mode");
+  }
+}
+
 createMatrix();
 createBoard();
+jumpModeButton.addEventListener("click", handleGodMode);
