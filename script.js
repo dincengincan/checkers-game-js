@@ -138,16 +138,25 @@ function playMove() {
   const nextLocation = getLocation(this.children[0]);
   const previousLocation = getLocation(selectedPieceElement);
 
-  if (isValidMove(previousLocation, nextLocation)) {
+  const validMove = findValidMove(previousLocation, nextLocation);
+  console.log(validMove);
+  if (validMove) {
     selectedPieceElement.classList.remove(selectedClass);
     this.children[0].classList.add(selectedClass);
 
     (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
     (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
 
-    // if (hasBeaten(previousLocation, nextLocation)) {
-    //   beatPieces(previousLocation, nextLocation);
-    // }
+    if (validMove?.toBeRemoved) {
+      (isWhitePieceSelected ? blackPieces : whitePieces).delete(
+        validMove?.toBeRemoved
+      );
+      const pieceToBeRemoved = findElementByDataId(validMove.toBeRemoved);
+      console.log(pieceToBeRemoved);
+      pieceToBeRemoved.classList.remove(
+        isWhiteNext ? blackPieceClass : whitePieceClass
+      );
+    }
 
     selectedPieceElement.classList.remove("selected");
     selectedPieceElement = null;
@@ -161,35 +170,45 @@ function hasBeaten(prevLocation, nextLocation) {
 
 function beatPieces(prevLocation, nextLocation) {}
 
-function isValidMove(prevLocation, nextLocation) {
+function findValidMove(prevLocation, nextLocation) {
   const validMoves = validateNeighbours(prevLocation);
 
-  return validMoves.has(nextLocation);
+  return validMoves?.find((move) => move.location === nextLocation);
 }
 
-function validateNeighbours(pieceLocation, moves) {
-  const validMoves = moves ?? new Set();
-  const neighbors = getAllNeighbours(pieceLocation);
-  // ["23", "32"]
-  console.log({ neighbors });
+function validateNeighbours(pieceLocation) {
+  const neighbours = getAllNeighbours(pieceLocation);
+  const nextLeftNeighbours = getAllNeighbours(neighbours.left);
+  const nextRightNeighbours = getAllNeighbours(neighbours.right);
 
-  for (let i = 0; i < neighbors.length; i++) {
-    if ((isWhiteNext ? whitePieces : blackPieces).has(neighbors[i])) {
-      // skip if there is own piece
-      continue;
-    }
+  const firstValidMoves = checkNeighbour(
+    neighbours.left,
+    nextLeftNeighbours.left
+  );
+  const SecondValidMoves = checkNeighbour(
+    neighbours.right,
+    nextRightNeighbours.right
+  );
 
-    if (isCellEmpty(neighbors[i])) {
-      // if empty add to valid moves
-      validMoves.add(neighbors[i]);
-    }
+  return [...firstValidMoves, ...SecondValidMoves];
+}
 
-    // if (blackPieces.has(neighbors[i]) && isCellEmpty(nextNextNeighbour)) {
-    //   // if there is opponent and space behind it add it
-    //   validMoves.add(nextNextNeighbour);
-    // }
+function checkNeighbour(location, nextNextNeighbour) {
+  const validMoves = [];
+
+  if (isCellEmpty(location)) {
+    // if empty add to valid moves
+    validMoves.push({ location });
   }
-  console.log(validMoves);
+
+  if (
+    (isWhiteNext ? blackPieces : whitePieces).has(location) &&
+    isCellEmpty(nextNextNeighbour)
+  ) {
+    // if there is opponent and space behind it add it
+    validMoves.push({ location: nextNextNeighbour, toBeRemoved: location });
+  }
+
   return validMoves;
 }
 
@@ -220,10 +239,14 @@ function getAllNeighbours(location) {
     secondNeighbourY = numberY + 1;
   }
 
-  return [
-    `${firstNeighbourX}${firstNeighbourY}`,
-    `${secondNeighbourX}${secondNeighbourY}`,
-  ];
+  return {
+    left: isWhiteNext
+      ? `${secondNeighbourX}${secondNeighbourY}`
+      : `${firstNeighbourX}${firstNeighbourY}`,
+    right: isWhiteNext
+      ? `${firstNeighbourX}${firstNeighbourY}`
+      : `${secondNeighbourX}${secondNeighbourY}`,
+  };
 }
 
 function extractLocationAsNumbers(location) {
@@ -235,6 +258,10 @@ function extractLocationAsNumbers(location) {
 
 function getLocation(element) {
   return element.getAttribute("data-location");
+}
+
+function findElementByDataId(dataId) {
+  return document.querySelector(`[data-location="${dataId}"]`);
 }
 
 function handleGodMode() {
