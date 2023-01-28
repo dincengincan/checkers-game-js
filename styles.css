@@ -11,6 +11,7 @@
 
 body {
   margin: 0;
+  background-color: rgb(73, 73, 73);
 }
 
 .boardRow {
@@ -19,6 +20,7 @@ body {
 
 .board {
   display: flex;
+  align-items: center;
   flex-direction: column;
 }
 
@@ -39,27 +41,28 @@ body {
 }
 
 .piece-black {
-  background-color: dimgray;
+  background-color: rgb(99, 99, 99);
   cursor: pointer;
   visibility: visible;
 }
 
 .piece-white {
-  background-color: antiquewhite;
+  background-color: rgb(159, 159, 159);
+
   cursor: pointer;
   visibility: visible;
 }
 
 .white {
-  background-color: antiquewhite;
+  background-color: rgb(99, 99, 99);
 }
 
 .selected {
-  background-color: red;
+  background-color: rgb(144, 82, 82);
 }
 
 .black {
-  background-color: cadetblue;
+  background-color: rgb(144, 144, 144);
 }
 
 .grey {
