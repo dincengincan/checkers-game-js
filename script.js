@@ -1,5 +1,6 @@
 const boardElement = document.getElementById("board");
 const jumpModeButton = document.getElementById("jump-mode-button");
+const whoIsNextInfo = document.getElementById("who-is-next-info");
 
 const blackValue = "b";
 const whiteValue = "w";
@@ -139,7 +140,7 @@ function playMove() {
   const previousLocation = getLocation(selectedPieceElement);
 
   const validMove = findValidMove(previousLocation, nextLocation);
-  console.log(validMove);
+
   if (validMove) {
     selectedPieceElement.classList.remove(selectedClass);
     this.children[0].classList.add(selectedClass);
@@ -152,7 +153,6 @@ function playMove() {
         validMove?.toBeRemoved
       );
       const pieceToBeRemoved = findElementByDataId(validMove.toBeRemoved);
-      console.log(pieceToBeRemoved);
       pieceToBeRemoved.classList.remove(
         isWhiteNext ? blackPieceClass : whitePieceClass
       );
@@ -160,7 +160,9 @@ function playMove() {
 
     selectedPieceElement.classList.remove("selected");
     selectedPieceElement = null;
-    isWhiteNext = !isWhiteNext;
+    if (!isGodMode) {
+      switchToNextOpponent();
+    }
   }
 }
 
@@ -191,6 +193,15 @@ function validateNeighbours(pieceLocation) {
   );
 
   return [...firstValidMoves, ...SecondValidMoves];
+}
+
+function switchToNextOpponent() {
+  isWhiteNext = !isWhiteNext;
+  if (isWhiteNext) {
+    whoIsNextInfo.innerText = "WHITE's TURN";
+  } else {
+    whoIsNextInfo.innerText = "BLACK's TURN";
+  }
 }
 
 function checkNeighbour(location, nextNextNeighbour) {
@@ -265,13 +276,15 @@ function findElementByDataId(dataId) {
 }
 
 function handleGodMode() {
-  isGodMode = !isGodMode;
-  if (!isGodMode) {
+  if (isGodMode) {
     this.innerText = "ENABLE QUDAY MODE";
     this.classList.toggle("kuday-mode");
+    switchToNextOpponent();
+    isGodMode = false;
   } else {
     this.innerText = "DISABLE QUDAY MODE";
     this.classList.toggle("kuday-mode");
+    isGodMode = true;
   }
 }
 
