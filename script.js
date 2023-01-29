@@ -1,10 +1,13 @@
 const boardElement = document.getElementById("board");
 const jumpModeButton = document.getElementById("jump-mode-button");
 const whoIsNextInfo = document.getElementById("who-is-next-info");
+const moveSound = document.getElementById("move-sound");
+const beatSound = document.getElementById("beat-sound");
+const godModeEnableSound = document.getElementById("god-mode-enable-sound");
+const godModeDisableSound = document.getElementById("god-mode-disable-sound");
 
 const blackValue = "b";
 const whiteValue = "w";
-const emptyValue = "e";
 
 let selectedPieceElement = "";
 let isWhiteNext = true;
@@ -15,7 +18,6 @@ const blackPieceClass = "piece-black";
 let isWhitePieceSelected = false;
 
 const gridSize = 8;
-const board = [];
 
 const whitePieces = new Set([
   "00",
@@ -46,31 +48,6 @@ const blackPieces = new Set([
   "75",
   "77",
 ]);
-
-// Not sure if I need it
-function createMatrix() {
-  for (let i = 0; i < 8; i++) {
-    const arr = [];
-    for (let j = 0; j < 8; j++) {
-      if (i === 3 || i === 4) {
-        arr.push(emptyValue);
-      } else if (i < 3) {
-        if (j % 2 === 0) {
-          arr.push(blackValue);
-        } else {
-          arr.push(emptyValue);
-        }
-      } else {
-        if (j % 2 === 0) {
-          arr.push(emptyValue);
-        } else {
-          arr.push(whiteValue);
-        }
-      }
-    }
-    board.push(arr);
-  }
-}
 
 function createBoard() {
   for (let i = 0; i < gridSize; i++) {
@@ -148,6 +125,10 @@ function playMove() {
     (isWhitePieceSelected ? whitePieces : blackPieces).add(nextLocation);
     (isWhitePieceSelected ? whitePieces : blackPieces).delete(previousLocation);
 
+    if (!validMove?.toBeRemoved) {
+      moveSound.play();
+    }
+
     if (validMove?.toBeRemoved) {
       (isWhitePieceSelected ? blackPieces : whitePieces).delete(
         validMove?.toBeRemoved
@@ -156,6 +137,7 @@ function playMove() {
       pieceToBeRemoved.classList.remove(
         isWhiteNext ? blackPieceClass : whitePieceClass
       );
+      beatSound.play();
     }
 
     selectedPieceElement.classList.remove("selected");
@@ -165,12 +147,6 @@ function playMove() {
     }
   }
 }
-
-function hasBeaten(prevLocation, nextLocation) {
-  // return nextLocation !== nextNeighbor;
-}
-
-function beatPieces(prevLocation, nextLocation) {}
 
 function findValidMove(prevLocation, nextLocation) {
   const validMoves = validateNeighbours(prevLocation);
@@ -282,14 +258,24 @@ function handleGodMode() {
     this.innerText = "ENABLE QUDAY MODE";
     this.classList.toggle("kuday-mode");
     switchToNextOpponent();
+    godModeEnableSound.pause();
+    godModeEnableSound.currentTime = 0;
+
+    godModeDisableSound.currentTime = 0;
+    godModeDisableSound.play();
     isGodMode = false;
   } else {
     this.innerText = "DISABLE QUDAY MODE";
     this.classList.toggle("kuday-mode");
+
+    godModeDisableSound.pause();
+    godModeDisableSound.currentTime = 0;
+
+    godModeEnableSound.currentTime = 0;
+    godModeEnableSound.play();
     isGodMode = true;
   }
 }
 
-createMatrix();
 createBoard();
 jumpModeButton.addEventListener("click", handleGodMode);
