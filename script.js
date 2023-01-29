@@ -52,7 +52,7 @@ const blackPieces = new Set([
 function createBoard() {
   for (let i = 0; i < gridSize; i++) {
     const boardRow = document.createElement("div");
-    boardRow.classList.add("boardRow");
+    boardRow.classList.add("board-row");
     for (let j = 0; j < gridSize; j++) {
       const hasBlackPiece = blackPieces.has(`${i}${j}`);
       const hasWhitePiece = whitePieces.has(`${i}${j}`);
@@ -256,7 +256,7 @@ function findElementByDataId(dataId) {
 function handleGodMode() {
   if (isGodMode) {
     this.innerText = "ENABLE QUDAY MODE";
-    this.classList.toggle("kuday-mode");
+    this.classList.toggle("god-mode");
     switchToNextOpponent();
     godModeEnableSound.pause();
     godModeEnableSound.currentTime = 0;
@@ -266,7 +266,7 @@ function handleGodMode() {
     isGodMode = false;
   } else {
     this.innerText = "DISABLE QUDAY MODE";
-    this.classList.toggle("kuday-mode");
+    this.classList.toggle("god-mode");
 
     godModeDisableSound.pause();
     godModeDisableSound.currentTime = 0;
