@@ -198,9 +198,11 @@ function validateNeighbours(pieceLocation) {
 function switchToNextOpponent() {
   isWhiteNext = !isWhiteNext;
   if (isWhiteNext) {
-    whoIsNextInfo.innerText = "WHITE's TURN";
+    whoIsNextInfo.innerText = "white's turn";
+    whoIsNextInfo.style.color = "white";
   } else {
-    whoIsNextInfo.innerText = "BLACK's TURN";
+    whoIsNextInfo.innerText = "black's turn";
+    whoIsNextInfo.style.color = "black";
   }
 }
 

@@ -71,15 +71,25 @@ body {
 }
 
 .kuday-mode {
-  background-color: red;
+  background-color: rgb(94, 0, 0);
   color: white;
 }
 
 button {
   background-color: gray;
   padding: 10px 5px;
-  margin: 10px;
+  margin: 30px 0;
   min-width: 200px;
   border: none;
   cursor: pointer;
+}
+
+#game {
+  text-align: center;
+  margin: 0 auto;
+}
+
+h2 {
+  color: white;
+  margin: 30px 0;
 }
